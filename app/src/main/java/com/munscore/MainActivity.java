@@ -1,5 +1,6 @@
 package com.munscore;
 
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,6 +9,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -30,12 +33,14 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     FloatingActionButton fab;
-    private final int COMMITTEE_PERM =1 ;
+    private final int COMMITTEE_PERM=1;
     private DBHelper mydb;
     TextView name, comm;
     ArrayList<String> coun_names = new ArrayList<>();
-    ListView lv;
+    //ListView lv;
     View parentLayout;
+    DrawerLayout drawer;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,13 +66,39 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-        lv = (ListView) findViewById(R.id.lv);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        //lv = (ListView) findViewById(R.id.lv);
         name =  (TextView) findViewById(R.id.name);
         comm = (TextView) findViewById(R.id.committee);
-        new GetDetails().execute();
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        boolean a = mydb.checkDataBase(getApplicationContext());
+        Log.d("Table: ", String.valueOf(a));
+        if(mydb.checkDataBase(getApplicationContext())){
+            fab.setVisibility(View.GONE);
+            Menu menuNav=navigationView.getMenu();
+            MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
+            nav_item2.setEnabled(true);
+            MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
+            nav_item3.setEnabled(true);
+            MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
+            nav_item4.setEnabled(true);
+        }
+        else {
+            Log.d("Table: ", "Exists");
+            fab.setVisibility(View.VISIBLE);
+            Menu menuNav = navigationView.getMenu();
+            MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
+            nav_item2.setEnabled(false);
+            MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
+            nav_item3.setEnabled(false);
+            MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
+            nav_item4.setEnabled(false);
+        }
         this.invalidateOptionsMenu();
+        navigationView.setCheckedItem(R.id.home);
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_frame, new Home()).commit();
+        //new GetDetails().execute();
     }
 
     @Override
@@ -76,7 +108,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -91,14 +122,12 @@ public class MainActivity extends AppCompatActivity
         menu.findItem(R.id.action_addtext).setVisible(false);
         menu.findItem(R.id.action_settings).setVisible(false);
         menu.findItem(R.id.action_create).setVisible(false);
-        if(name.getText().toString().isEmpty()){
-            Log.d("Name: ", name.getText().toString());
-            Log.d("Hiding ", "item");
+        menu.findItem(R.id.action_home).setVisible(false);
+        menu.findItem(R.id.action_deltext).setVisible(false);
+        if(!mydb.checkDataBase(getApplicationContext())){
             menu.findItem(R.id.action_deltext).setVisible(false);
         }
         else{
-            Log.d("Name: ", name.getText().toString());
-            Log.d("Showing ", "item");
             menu.findItem(R.id.action_deltext).setVisible(true);
         }
         return true;
@@ -119,12 +148,21 @@ public class MainActivity extends AppCompatActivity
             al.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mydb.dropTab();
-                    name.setText(null);
+                    mydb.delDb(getApplicationContext());
                     fab.setVisibility(View.VISIBLE);
-                    name.setVisibility(View.GONE);
-                    comm.setVisibility(View.VISIBLE);
-                    lv.setVisibility(View.VISIBLE);
+                    Menu menuNav = navigationView.getMenu();
+                    MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
+                    nav_item2.setEnabled(false);
+                    MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
+                    nav_item3.setEnabled(false);
+                    MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
+                    nav_item4.setEnabled(false);
+                    navigationView.setCheckedItem(R.id.home);
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.content_frame, new Home()).commit();
+                    //name.setVisibility(View.GONE);
+                    //comm.setVisibility(View.VISIBLE);
+                    //lv.setVisibility(View.GONE);
                     coun_names.clear();
                     Snackbar.make(parentLayout, "Committee deleted", Snackbar.LENGTH_LONG).show();
                     MainActivity.this.invalidateOptionsMenu();
@@ -147,19 +185,24 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        switch (id){
+            case R.id.home:
+                transaction.replace(R.id.content_frame, new Home()).commit();
+                break;
 
-        } else if (id == R.id.nav_slideshow) {
+            case R.id.day_one:
+                transaction.replace(R.id.content_frame, new DayOne()).commit();
+                break;
 
-        } else if (id == R.id.nav_manage) {
+            case R.id.day_two:
+                transaction.replace(R.id.content_frame, new DayTwo()).commit();
+                break;
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            case R.id.day_three:
+                transaction.replace(R.id.content_frame, new DayThree()).commit();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -173,13 +216,25 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == COMMITTEE_PERM){
             if(resultCode == RESULT_OK){
                 Toast.makeText(MainActivity.this, "Committee created!", Toast.LENGTH_LONG).show();
-                new GetDetails().execute();
+                //new GetDetails().execute();
+                fab.setVisibility(View.GONE);
+                Menu menuNav=navigationView.getMenu();
+                MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
+                nav_item2.setEnabled(true);
+                MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
+                nav_item3.setEnabled(true);
+                MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
+                nav_item4.setEnabled(true);
+                this.invalidateOptionsMenu();
+                navigationView.setCheckedItem(R.id.home);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.content_frame, new Home()).commit();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public class GetDetails extends AsyncTask<Void, Void, Void>{
+    /*private class GetDetails extends AsyncTask<Void, Void, Void>{
 
         String nam;
 
@@ -189,13 +244,13 @@ public class MainActivity extends AppCompatActivity
                 Cursor rs = mydb.getComName();
                 rs.moveToFirst();
                 nam = rs.getString(rs.getColumnIndex(DBHelper.COMMITTEE_NAME));
-                coun_names = mydb.getCountryName();
+                //coun_names = mydb.getCountryName();
                 if(coun_names != null){
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            lv.setVisibility(View.VISIBLE);
-                            lv.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, coun_names));
+                            //lv.setVisibility(View.VISIBLE);
+                            //lv.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, coun_names));
                         }
                     });
                 }
@@ -203,7 +258,7 @@ public class MainActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            lv.setVisibility(View.GONE);
+                            //lv.setVisibility(View.GONE);
                         }
                     });
                 }
@@ -215,7 +270,10 @@ public class MainActivity extends AppCompatActivity
                             name.setVisibility(View.VISIBLE);
                             comm.setVisibility(View.GONE);
                             name.setText(nam);
-                            MainActivity.this.invalidateOptionsMenu();
+                            //MainActivity.this.invalidateOptionsMenu();
+                            navigationView.setCheckedItem(R.id.day_one);
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.content_frame, new DayOne()).commit();
                         }
                     });
                 } else {
@@ -242,5 +300,5 @@ public class MainActivity extends AppCompatActivity
             }
             return null;
         }
-    }
+    }*/
 }

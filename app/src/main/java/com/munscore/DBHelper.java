@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,14 @@ public class DBHelper extends SQLiteOpenHelper {
         //db.execSQL("create table" + JUDGE_TABLE_NAME + "(country_name text)");
     }
 
+    boolean checkDataBase(Context context) {
+        File dbFile = context.getDatabasePath(DATABASE_NAME);
+        if(dbFile.exists())
+            return true;
+        else
+            return false;
+    }
+
     void createTables(Context context, String[] countries) {
         try {
             SQLiteDatabase myDataBase = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
@@ -48,7 +58,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 q += ", ";
             }
             //q += countries[i] + " integer,";
-            q = "create table if not exists " + JUDGE_TABLE_NAME + "(country_name text primary key, " + q + "score integer, foreign key (country_name) references " + COUNTRY_TABLE_NAME+ "(country))";
+            q = "create table if not exists " + JUDGE_TABLE_NAME + "(speech_id integer primary key, country_name text, " + q + "score integer, foreign key (country_name) references " + COUNTRY_TABLE_NAME+ "(country))";
             myDataBase.execSQL(q);
             Log.d("Tables: ", myDataBase.toString());
         }
@@ -160,6 +170,11 @@ public class DBHelper extends SQLiteOpenHelper {
             e.printStackTrace();
             return false;
         }
+    }
+
+    boolean delDb(Context context){
+        context.deleteDatabase(DATABASE_NAME);
+        return true;
     }
 
     @Override

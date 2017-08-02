@@ -25,4 +25,10 @@
         android:title="Create committee"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_home"
+        android:icon="@drawable/ic_home_black"
+        android:title="Home"
+        app:showAsAction="ifRoom" />
+
 </menu>

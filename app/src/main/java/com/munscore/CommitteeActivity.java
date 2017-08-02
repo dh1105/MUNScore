@@ -79,6 +79,7 @@ public class CommitteeActivity extends AppCompatActivity {
         menu.findItem(R.id.action_deltext).setVisible(false);
         menu.findItem(R.id.action_addtext).setVisible(false);
         menu.findItem(R.id.action_create).setVisible(false);
+        menu.findItem(R.id.action_home).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 

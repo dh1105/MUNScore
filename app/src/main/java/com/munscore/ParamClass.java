@@ -81,6 +81,7 @@ public class ParamClass extends AppCompatActivity {
         menu.findItem(R.id.action_settings).setVisible(false);
         menu.findItem(R.id.action_deltext).setVisible(false);
         menu.findItem(R.id.action_create).setVisible(false);
+        menu.findItem(R.id.action_home).setVisible(false);
         if(textView.size() != 0){
             menu.findItem(R.id.action_deltext).setVisible(true);
         }
