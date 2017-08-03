@@ -12,6 +12,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,11 +27,20 @@
             android:name=".ParamClass"
             android:launchMode="singleTop"
             android:parentActivityName=".CommitteeActivity" />
-        <activity android:name=".AddCountries"
-            android:parentActivityName=".ParamClass"/>
-        <activity android:name=".SelectCountries"
-            android:theme="@style/AppTheme"
-            android:parentActivityName=".ParamClass"/>
+        <activity
+            android:name=".AddCountries"
+            android:parentActivityName=".ParamClass" />
+        <activity
+            android:name=".SelectCountries"
+            android:parentActivityName=".ParamClass"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".DayOneScore"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".DayTwoScore"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".DayThreeScore"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

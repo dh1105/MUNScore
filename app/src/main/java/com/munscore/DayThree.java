@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,6 +40,14 @@ public class DayThree extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.day_three, container, false);
         lv_country = (ListView) v.findViewById(R.id.lv_country);
+        lv_country.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String name=(String) lv_country.getItemAtPosition(position);
+                Intent in=new Intent(getActivity(), DayTwoScore.class);
+                startActivity(in);
+            }
+        });
         mydb = new DBHelper(getActivity());
         name = (TextView) v.findViewById(R.id.com_name);
         new DayThree.GetCountry().execute();

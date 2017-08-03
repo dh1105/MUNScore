@@ -67,6 +67,12 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    String[] getJudgeCol(){
+        SQLiteDatabase m=getReadableDatabase();
+        Cursor dbCursor = m.query(JUDGE_TABLE_NAME, null, null, null, null, null, null);
+        return dbCursor.getColumnNames();
+    }
+
     boolean insertCommittee(String name, int id){
         try{
             SQLiteDatabase db = this.getWritableDatabase();
