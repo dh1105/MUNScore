@@ -1,8 +1,10 @@
 package com.munscore;
 
 import android.app.ActionBar;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +27,8 @@ public class DayOneScore extends AppCompatActivity {
     DBHelper mydb;
     android.support.v7.app.ActionBar ab;
     View parent;
+    String [] c, cr;
+    String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +58,33 @@ public class DayOneScore extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.action_create:
-                String [] c = getEditText();
+                Intent i = getIntent();
+                name = i.getStringExtra("name");
+                c = getEditText();
+                cr = getTextView();
+                if(c != null && cr != null){
+                    AlertDialog.Builder al = new AlertDialog.Builder(DayOneScore.this);
+                    al.setCancelable(true);
+                    al.setTitle("Save details");
+                    al.setMessage("Are you sure you want to save these changes?");
+                    al.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mydb.insertScore(getApplicationContext(), cr, c, 1, name);
+                            Intent in = new Intent(getApplicationContext(), CountryDetails.class);
+                            setResult(RESULT_OK, in);
+                            finish();
+                        }
+                    });
+                    al.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    al.show();
+                    break;
+                }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -80,6 +110,19 @@ public class DayOneScore extends AppCompatActivity {
             ed.setTextSize(18.0f);
             score_lay.addView(ed);
         }
+    }
+
+    public String[] getTextView(){
+        List<String> c = new ArrayList<>();
+        for(int k = 0; k < textViews.size(); k++){
+            String criteria = textViews.get(k).getText().toString();
+            c.add(criteria);
+        }
+        String [] cr = new String[c.size()];
+        for(int i = 0; i<c.size(); i++){
+            cr[i] = c.get(i);
+        }
+        return cr;
     }
 
     public String[] getEditText(){

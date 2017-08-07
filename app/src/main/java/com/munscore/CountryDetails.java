@@ -27,25 +27,26 @@ public class CountryDetails extends AppCompatActivity implements View.OnClickLis
         comm_name = (TextView) findViewById(R.id.comm_name);
         comm_name.setText(name);
         no_of_speeches = (TextView) findViewById(R.id.no_of_speeches);
-        setSpeechNo(name);
+        setSpeechNo(act);
         Button b = (Button) findViewById(R.id.new_speech);
         b.setOnClickListener(this);
     }
 
     public void setSpeechNo(String a){
-        int val = 0;
         switch (a) {
             case "DayOne":
-                val = mydb.getSpeechCount(name, 1);
+                int val = mydb.getSpeechCount(name, 1);
+                no_of_speeches.setText(Integer.toString(val));
                 break;
             case "DayTwo":
-                val = mydb.getSpeechCount(name, 2);
+                int val1 = mydb.getSpeechCount(name, 2);
+                no_of_speeches.setText(Integer.toString(val1));
                 break;
             case "DayThree":
-                val = mydb.getSpeechCount(name, 3);
+                int val2 = mydb.getSpeechCount(name, 3);
+                no_of_speeches.setText(Integer.toString(val2));
                 break;
         }
-        no_of_speeches.setText(Integer.toString(val));
     }
 
     public void setActionBar(String a, String b) {
@@ -68,7 +69,7 @@ public class CountryDetails extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         View parentView = findViewById(android.R.id.content);
-        setSpeechNo(name);
+        setSpeechNo(act);
         if(requestCode == 1){
             if(resultCode == RESULT_OK){
                 Snackbar.make(parentView, "New speech for day 1 added for "+ name, Snackbar.LENGTH_LONG).show();

@@ -37,13 +37,16 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".DayOneScore"
-            android:parentActivityName=".CountryDetails" />
+            android:parentActivityName=".CountryDetails"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".DayTwoScore"
-            android:parentActivityName=".CountryDetails" />
+            android:parentActivityName=".CountryDetails"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".DayThreeScore"
-            android:parentActivityName=".CountryDetails" />
+            android:parentActivityName=".CountryDetails"
+            android:theme="@style/AppTheme"/>
         <activity android:name=".CountryDetails"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"/>

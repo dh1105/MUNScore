@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.io.File;
@@ -59,6 +60,21 @@ public class DBHelper extends SQLiteOpenHelper {
             q = "create table if not exists " + JUDGE_TABLE_NAME + "(speech_id integer primary key AUTOINCREMENT NOT NULL, day integer, country_name text, " + q + "foreign key (country_name) references " + COUNTRY_TABLE_NAME+ "(country))";
             myDataBase.execSQL(q);
             Log.d("Tables: ", myDataBase.toString());
+            SQLiteDatabase db = getReadableDatabase();
+            String tableString = String.format("Table %s:\n", JUDGE_TABLE_NAME);
+            Cursor allRows  = db.rawQuery("SELECT * FROM " + JUDGE_TABLE_NAME, null);
+            if (allRows.moveToFirst() ){
+                String[] columnNames = allRows.getColumnNames();
+                do {
+                    for (String vname: columnNames) {
+                        tableString += String.format("%s: %s\n", vname,
+                                allRows.getString(allRows.getColumnIndex(vname)));
+                    }
+                    tableString += "\n";
+
+                } while (allRows.moveToNext());
+            }
+            Log.d("Rows comm: ", tableString);
         }
         catch (SQLException e){
             e.printStackTrace();
@@ -84,7 +100,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     int getSpeechCount(String name, int day){
         SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db.rawQuery("select count(*) from " + JUDGE_TABLE_NAME + " where country_name = " + name + "and day=" + String.valueOf(day), null);
+        Cursor c = db.rawQuery("select count(*) from " + JUDGE_TABLE_NAME + " where country_name = '" + name + "' and day=" + String.valueOf(day), null);
         c.moveToFirst();
         int temp = c.getInt(0);
         Log.d("Value: ", String.valueOf(temp));
@@ -154,6 +170,67 @@ public class DBHelper extends SQLiteOpenHelper {
         catch (SQLException e){
             e.printStackTrace();
             return null;
+        }
+    }
+
+    void insertScore(Context context, String [] a, String [] b, int day, String name){
+        try{
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
+            String titleString=null;
+            String markString= null;
+            int i;
+            titleString = "";
+            markString = "";
+            Log.d("**createDynamicDatabase", "in oncreate");
+            for(i=0;i<a.length;i++)
+            {
+                titleString += a[i];
+                titleString +=",";
+                markString += b[i];
+                markString += ",";
+            }
+            //titleString+= a[i];
+            //markString += "?";
+
+            //System.out.println("Title String: "+titleString);
+            //System.out.println("Mark String: "+markString);
+
+
+            String INSERT="insert into "+ JUDGE_TABLE_NAME + "(country_name,"+titleString+"day)"+ " values" +"('" + name + "'," + markString + String.valueOf(day) + ")";
+            System.out.println("Insert statement: "+INSERT);
+            //System.out.println("Array size iiiiii::: "+array_vals.size());
+            //this.insertStmt = this.myDataBase.compileStatement(INSERT);
+            int s=0;
+
+            SQLiteStatement insertStmt = myDataBase.compileStatement(INSERT);
+            insertStmt.executeInsert();
+            //insertStmt.executeInsert();
+            /*while(s<b.length){
+
+                System.out.println("Size of array1"+b.length);
+                //System.out.println("Size of array"+title.size());
+                int j=1;
+                insertStmt = myDataBase.compileStatement(INSERT);
+                for(int k =0;k< a.length;k++)
+                {
+
+                    //System.out.println("Value of column "+title+" is "+array_vals.get(k+s));
+                    //System.out.println("PRINT S:"+array_vals.get(k+s));
+                    System.out.println("BindString: insertStmt.bindString("+j+","+ b[k+s]+")");
+                    insertStmt.bindString(j, b[k+s]);
+
+
+
+                    j++;
+                }
+
+                s+=a.length;
+
+            }
+            insertStmt.executeInsert();*/
+        }
+        catch(SQLException e){
+            e.printStackTrace();
         }
     }
 
