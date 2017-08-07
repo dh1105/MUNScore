@@ -38,15 +38,15 @@ public class MainActivity extends AppCompatActivity
     TextView name, comm;
     ArrayList<String> coun_names = new ArrayList<>();
     //ListView lv;
-    View parentLayout;
     DrawerLayout drawer;
     NavigationView navigationView;
+    int day;
+    View fabView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        parentLayout = findViewById(android.R.id.content);
         mydb = new DBHelper(MainActivity.this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(com, COMMITTEE_PERM);
             }
         });
-
+        fabView = findViewById(R.id.fab);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -73,26 +73,11 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         boolean a = mydb.checkDataBase(getApplicationContext());
         Log.d("Table: ", String.valueOf(a));
-        if(mydb.checkDataBase(getApplicationContext())){
-            fab.setVisibility(View.GONE);
-            Menu menuNav=navigationView.getMenu();
-            MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
-            nav_item2.setEnabled(true);
-            MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
-            nav_item3.setEnabled(true);
-            MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
-            nav_item4.setEnabled(true);
+        if(mydb.isTableExists()){
+            setNavDraw();
         }
         else {
-            Log.d("Table: ", "Exists");
-            fab.setVisibility(View.VISIBLE);
-            Menu menuNav = navigationView.getMenu();
-            MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
-            nav_item2.setEnabled(false);
-            MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
-            nav_item3.setEnabled(false);
-            MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
-            nav_item4.setEnabled(false);
+            hideFrag();
         }
         this.invalidateOptionsMenu();
         navigationView.setCheckedItem(R.id.home);
@@ -124,13 +109,25 @@ public class MainActivity extends AppCompatActivity
         menu.findItem(R.id.action_create).setVisible(false);
         menu.findItem(R.id.action_home).setVisible(false);
         menu.findItem(R.id.action_deltext).setVisible(false);
-        if(!mydb.checkDataBase(getApplicationContext())){
+        if(!mydb.isTableExists()){
             menu.findItem(R.id.action_deltext).setVisible(false);
         }
         else{
             menu.findItem(R.id.action_deltext).setVisible(true);
         }
         return true;
+    }
+
+    public void hideFrag(){
+        Log.d("Table: ", "Exists");
+        fab.setVisibility(View.VISIBLE);
+        Menu menuNav = navigationView.getMenu();
+        MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
+        nav_item2.setEnabled(false);
+        MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
+        nav_item3.setEnabled(false);
+        MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
+        nav_item4.setEnabled(false);
     }
 
     @Override
@@ -148,7 +145,8 @@ public class MainActivity extends AppCompatActivity
             al.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mydb.delDb(getApplicationContext());
+                    //mydb.delDb(getApplicationContext());
+                    mydb.dropTab();
                     fab.setVisibility(View.VISIBLE);
                     Menu menuNav = navigationView.getMenu();
                     MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
@@ -164,7 +162,7 @@ public class MainActivity extends AppCompatActivity
                     //comm.setVisibility(View.VISIBLE);
                     //lv.setVisibility(View.GONE);
                     coun_names.clear();
-                    Snackbar.make(parentLayout, "Committee deleted", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(fabView, "Committee deleted", Snackbar.LENGTH_LONG).show();
                     MainActivity.this.invalidateOptionsMenu();
                 }
             });
@@ -178,6 +176,38 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setNavDraw(){
+        //int temp = mydb.getDays();
+        day = mydb.getDays();
+        Log.d("Days: ", Integer.toString(day));
+        fab.setVisibility(View.GONE);
+        Menu menuNav=navigationView.getMenu();
+        if(day==1) {
+            MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
+            nav_item2.setEnabled(true);
+            MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
+            nav_item3.setEnabled(false);
+            MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
+            nav_item4.setEnabled(false);
+        }
+        else if(day==2){
+            MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
+            nav_item2.setEnabled(true);
+            MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
+            nav_item3.setEnabled(true);
+            MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
+            nav_item4.setEnabled(false);
+        }
+        else if(day==3){
+            MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
+            nav_item2.setEnabled(true);
+            MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
+            nav_item3.setEnabled(true);
+            MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
+            nav_item4.setEnabled(true);
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -217,14 +247,7 @@ public class MainActivity extends AppCompatActivity
             if(resultCode == RESULT_OK){
                 Toast.makeText(MainActivity.this, "Committee created!", Toast.LENGTH_LONG).show();
                 //new GetDetails().execute();
-                fab.setVisibility(View.GONE);
-                Menu menuNav=navigationView.getMenu();
-                MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
-                nav_item2.setEnabled(true);
-                MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
-                nav_item3.setEnabled(true);
-                MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
-                nav_item4.setEnabled(true);
+                setNavDraw();
                 this.invalidateOptionsMenu();
                 navigationView.setCheckedItem(R.id.home);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -234,71 +257,11 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    /*private class GetDetails extends AsyncTask<Void, Void, Void>{
-
-        String nam;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                Cursor rs = mydb.getComName();
-                rs.moveToFirst();
-                nam = rs.getString(rs.getColumnIndex(DBHelper.COMMITTEE_NAME));
-                //coun_names = mydb.getCountryName();
-                if(coun_names != null){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //lv.setVisibility(View.VISIBLE);
-                            //lv.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, coun_names));
-                        }
-                    });
-                }
-                else{
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //lv.setVisibility(View.GONE);
-                        }
-                    });
-                }
-                if (!nam.isEmpty()) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            fab.setVisibility(View.GONE);
-                            name.setVisibility(View.VISIBLE);
-                            comm.setVisibility(View.GONE);
-                            name.setText(nam);
-                            //MainActivity.this.invalidateOptionsMenu();
-                            navigationView.setCheckedItem(R.id.day_one);
-                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                            transaction.replace(R.id.content_frame, new DayOne()).commit();
-                        }
-                    });
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            fab.setVisibility(View.VISIBLE);
-                            name.setVisibility(View.GONE);
-                            comm.setVisibility(View.VISIBLE);
-                        }
-                    });
-                }
-            }
-            catch (SQLException f){
-                f.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        fab.setVisibility(View.VISIBLE);
-                        name.setVisibility(View.GONE);
-                        comm.setVisibility(View.VISIBLE);
-                    }
-                });
-            }
-            return null;
-        }
+    /*public int Days(){
+        Cursor res = mydb.getDays();
+        res.moveToFirst();
+        int temp = res.getInt(res.getColumnIndex(DBHelper.DAYS));
+        Log.d("temp: ", Integer.toString(temp));
+        return res.getInt(res.getColumnIndex(DBHelper.DAYS));
     }*/
 }

@@ -24,6 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String COUNTRY_TABLE_NAME = "country";
     private static final String JUDGE_TABLE_NAME = "judge";
     public static final String COMMITTEE_NAME = "committee_name";
+    //public static final String DAYS = "days";
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME , null, 1);
@@ -38,16 +39,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
     boolean checkDataBase(Context context) {
         File dbFile = context.getDatabasePath(DATABASE_NAME);
-        if(dbFile.exists())
-            return true;
-        else
-            return false;
+        return dbFile.exists();
     }
 
     void createTables(Context context, String[] countries) {
         try {
             SQLiteDatabase myDataBase = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
-            myDataBase.execSQL("create table if not exists " + COMMITTEE_TABLE_NAME + "(id integer primary key, committee_name text)");
+            myDataBase.execSQL("create table if not exists " + COMMITTEE_TABLE_NAME + "(id integer primary key, days integer, committee_name text)");
             myDataBase.execSQL("create table if not exists " + COUNTRY_TABLE_NAME + "(com_id integer, country text, foreign key (com_id) references " + COMMITTEE_TABLE_NAME +"(id))");
             String q;
             int i;
@@ -58,7 +56,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 q += ", ";
             }
             //q += countries[i] + " integer,";
-            q = "create table if not exists " + JUDGE_TABLE_NAME + "(speech_id integer primary key, country_name text, " + q + "score integer, foreign key (country_name) references " + COUNTRY_TABLE_NAME+ "(country))";
+            q = "create table if not exists " + JUDGE_TABLE_NAME + "(speech_id integer primary key AUTOINCREMENT NOT NULL, day integer, country_name text, " + q + "foreign key (country_name) references " + COUNTRY_TABLE_NAME+ "(country))";
             myDataBase.execSQL(q);
             Log.d("Tables: ", myDataBase.toString());
         }
@@ -67,18 +65,50 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean isTableExists() {
+        SQLiteDatabase mDatabase = this.getReadableDatabase();
+        if(!mDatabase.isReadOnly()) {
+            mDatabase.close();
+            mDatabase = getReadableDatabase();
+        }
+        Cursor cursor = mDatabase.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+COMMITTEE_TABLE_NAME+"'", null);
+        if(cursor!=null) {
+            if(cursor.getCount()>0) {
+                cursor.close();
+                return true;
+            }
+            cursor.close();
+        }
+        return false;
+    }
+
+    int getSpeechCount(String name, int day){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.rawQuery("select count(*) from " + JUDGE_TABLE_NAME + " where country_name = " + name + "and day=" + String.valueOf(day), null);
+        c.moveToFirst();
+        int temp = c.getInt(0);
+        Log.d("Value: ", String.valueOf(temp));
+        return temp;
+    }
+
     String[] getJudgeCol(){
         SQLiteDatabase m=getReadableDatabase();
         Cursor dbCursor = m.query(JUDGE_TABLE_NAME, null, null, null, null, null, null);
+        String []a= dbCursor.getColumnNames();
+        for (String anA : a) {
+            Log.d("Column: ", anA);
+        }
         return dbCursor.getColumnNames();
     }
 
-    boolean insertCommittee(String name, int id){
+    boolean insertCommittee(String name, int id, int day){
         try{
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
             contentValues.put("id", id);
             contentValues.put("committee_name", name);
+            Log.d("Temp ins: ", Integer.toString(day));
+            contentValues.put("days", day);
             db.insert(COMMITTEE_TABLE_NAME, null, contentValues);
             String tableString = String.format("Table %s:\n", COMMITTEE_TABLE_NAME);
             Cursor allRows  = db.rawQuery("SELECT * FROM " + COMMITTEE_TABLE_NAME, null);
@@ -160,8 +190,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
     Cursor getComName(){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select committee_name from committee where id = 1", null );
-        return res;
+        return db.rawQuery( "select committee_name from committee where id = 1", null );
+    }
+
+    int getDays(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor rs = db.rawQuery("select days from committee where id = 1",null);
+        rs.moveToFirst();
+        int temp = rs.getInt(0);
+        Log.d("Temp db: ", Integer.toString(temp));
+        return temp;
     }
 
     boolean dropTab(){
@@ -178,14 +216,11 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    boolean delDb(Context context){
-        context.deleteDatabase(DATABASE_NAME);
-        return true;
-    }
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS committee");
+        db.execSQL("DROP TABLE IF EXISTS country");
+        db.execSQL("DROP TABLE IF EXISTS judge");
         onCreate(db);
     }
 }

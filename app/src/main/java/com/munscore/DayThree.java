@@ -44,7 +44,9 @@ public class DayThree extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String name=(String) lv_country.getItemAtPosition(position);
-                Intent in=new Intent(getActivity(), DayTwoScore.class);
+                Intent in=new Intent(getActivity(), CountryDetails.class);
+                in.putExtra("name", name);
+                in.putExtra("act", "DayThree");
                 startActivity(in);
             }
         });

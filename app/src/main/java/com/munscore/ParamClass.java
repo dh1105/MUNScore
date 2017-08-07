@@ -46,8 +46,11 @@ public class ParamClass extends AppCompatActivity {
                     Log.d("Array: ", Arrays.toString(cr));
                     Intent i = getIntent();
                     String name = i.getStringExtra("name");
+                    String day = i.getStringExtra("day");
+                    Log.d("Day param: ", day);
                     Intent in = new Intent(ParamClass.this, AddCountries.class);
                     in.putExtra("name", name);
+                    in.putExtra("day", day);
                     Bundle b = new Bundle();
                     b.putStringArray("criteria", cr);
                     in.putExtras(b);
@@ -64,8 +67,11 @@ public class ParamClass extends AppCompatActivity {
                     Log.d("Array: ", Arrays.toString(cr));
                     Intent i = getIntent();
                     String name = i.getStringExtra("name");
+                    String day = i.getStringExtra("day");
+                    Log.d("Day param: ", day);
                     Intent in = new Intent(ParamClass.this, SelectCountries.class);
                     in.putExtra("name", name);
+                    in.putExtra("day", day);
                     Bundle b = new Bundle();
                     b.putStringArray("criteria", cr);
                     in.putExtras(b);

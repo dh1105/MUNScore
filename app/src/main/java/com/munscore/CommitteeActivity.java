@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +17,7 @@ import android.widget.EditText;
 public class CommitteeActivity extends AppCompatActivity {
 
     Button next;
-    EditText committee_name;
+    EditText committee_name, day;
     View parentLayout;
     private final int ACT =1;
 
@@ -26,18 +27,21 @@ public class CommitteeActivity extends AppCompatActivity {
         parentLayout = findViewById(android.R.id.content);
         setContentView(R.layout.activity_committee);
         next = (Button) findViewById(R.id.next);
+        committee_name = (EditText) findViewById(R.id.committee_name);
+        day =(EditText) findViewById(R.id.day);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(getText() != null){
-                    String committee_name = getText();
+                if(getText(committee_name) != null && getText(day) != null){
+                    String cn = getText(committee_name);
+                    String d = getText(day);
                     Intent i =  new Intent(CommitteeActivity.this, ParamClass.class);
-                    i.putExtra("name", committee_name);
+                    i.putExtra("name", cn);
+                    i.putExtra("day", d);
                     startActivityForResult(i, ACT);
                 }
             }
         });
-        committee_name = (EditText) findViewById(R.id.committee_name);
         this.invalidateOptionsMenu();
     }
 
@@ -84,6 +88,16 @@ public class CommitteeActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
@@ -96,13 +110,13 @@ public class CommitteeActivity extends AppCompatActivity {
         }
     }
 
-    public String getText(){
-        if(committee_name.getText().toString().isEmpty()){
-            Snackbar.make(parentLayout, "Please enter the committee name", Snackbar.LENGTH_LONG).show();
+    public String getText(EditText e){
+        if(e.getText().toString().isEmpty()){
+            Snackbar.make(parentLayout, "Please enter the committee name and days", Snackbar.LENGTH_LONG).show();
             return null;
         }
         else{
-            return committee_name.getText().toString();
+            return e.getText().toString();
         }
     }
 }

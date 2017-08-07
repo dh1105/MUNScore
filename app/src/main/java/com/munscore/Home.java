@@ -42,7 +42,7 @@ public class Home extends Fragment {
         mydb = new DBHelper(getActivity());
         name =  (TextView) v.findViewById(R.id.name);
         comm = (TextView) v.findViewById(R.id.committee);
-        if(mydb.checkDataBase(getActivity())){
+        if(mydb.isTableExists()){
             new Home.GetDetails().execute();
         }
         else {

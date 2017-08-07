@@ -33,7 +33,8 @@ public class SelectCountries extends AppCompatActivity {
     List<String> co = new ArrayList<>();
     DBHelper mydb;
     String [] cr;
-    String name;
+    String name, day;
+    int d;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +89,14 @@ public class SelectCountries extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent in = getIntent();
                         name = in.getStringExtra("name");
+                        day = in.getStringExtra("day");
+                        Log.d("Day select: ", day);
+                        try {
+                            d = Integer.parseInt(day);
+                            Log.d("Day add: ", day);
+                        } catch(NumberFormatException nfe) {
+                            Log.d("Could not parse ", nfe.toString());
+                        }
                         Bundle b;
                         b = in.getExtras();
                         cr = b.getStringArray("criteria");
@@ -195,9 +204,9 @@ public class SelectCountries extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            mydb.dropTab();
+            //mydb.delDb(getApplicationContext());
             mydb.createTables(SelectCountries.this, cr);
-            mydb.insertCommittee(name, 1);
+            mydb.insertCommittee(name, 1, d);
             mydb.insertCountry(co, 1);
             return null;
         }

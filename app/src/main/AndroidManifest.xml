@@ -22,7 +22,8 @@
         </activity>
         <activity
             android:name=".CommitteeActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".ParamClass"
             android:launchMode="singleTop"
@@ -36,11 +37,16 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".DayOneScore"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".DayTwoScore"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".DayThreeScore"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".CountryDetails" />
+        <activity
+            android:name=".DayTwoScore"
+            android:parentActivityName=".CountryDetails" />
+        <activity
+            android:name=".DayThreeScore"
+            android:parentActivityName=".CountryDetails" />
+        <activity android:name=".CountryDetails"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>

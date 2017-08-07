@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class AddCountries extends AppCompatActivity {
 
@@ -28,8 +29,9 @@ public class AddCountries extends AppCompatActivity {
     ArrayList<EditText> textView = new ArrayList<>();
     String [] co;
     String [] cr;
-    String name;
+    String name, day;
     DBHelper mydb;
+    int d;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +97,14 @@ public class AddCountries extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             Intent in = getIntent();
                             name = in.getStringExtra("name");
+                            day = in.getStringExtra("day");
+                            Log.d("Day add: ", day);
+                            try {
+                                d = Integer.parseInt(day);
+                                Log.d("Day add: ", Integer.toString(d));
+                            } catch(NumberFormatException nfe) {
+                                System.out.println("Could not parse " + nfe);
+                            }
                             Bundle b;
                             b = in.getExtras();
                             cr = b.getStringArray("criteria");
@@ -137,7 +147,7 @@ public class AddCountries extends AppCompatActivity {
         return cr;
     }
 
-    public class InsertAsync extends AsyncTask<Void, Void, Void> {
+    private class InsertAsync extends AsyncTask<Void, Void, Void> {
 
         ProgressDialog p;
 
@@ -153,9 +163,9 @@ public class AddCountries extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            mydb.dropTab();
+            //mydb.delDb(getApplicationContext());
             mydb.createTables(AddCountries.this, cr);
-            mydb.insertCommittee(name, 1);
+            mydb.insertCommittee(name, 1, d);
             List<String> c = new ArrayList<>();
             for(int i = 0; i<co.length; i++){
                 c.add(co[i]);
