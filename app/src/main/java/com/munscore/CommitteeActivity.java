@@ -3,12 +3,11 @@ package com.munscore;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -35,7 +34,7 @@ public class CommitteeActivity extends AppCompatActivity {
                 if(getText(committee_name) != null && getText(day) != null){
                     String cn = getText(committee_name);
                     String d = getText(day);
-                    Intent i =  new Intent(CommitteeActivity.this, ParamClass.class);
+                    Intent i =  new Intent(CommitteeActivity.this, WriteDetermine.class);
                     i.putExtra("name", cn);
                     i.putExtra("day", d);
                     startActivityForResult(i, ACT);

@@ -98,6 +98,27 @@ public class AddCountries extends AppCompatActivity {
                             Intent in = getIntent();
                             name = in.getStringExtra("name");
                             day = in.getStringExtra("day");
+                            String dref_res, direct, chit_m, p_o_i, p_o_o;
+                            dref_res = in.getStringExtra("dr");
+                            direct = in.getStringExtra("dir");
+                            chit_m = in.getStringExtra("chit");
+                            p_o_i = in.getStringExtra("poi");
+                            p_o_o = in.getStringExtra("poo");
+                            if(dref_res.equals("YES")){
+                                mydb.drTable(getApplicationContext());
+                            }
+                            if(direct.equals("YES")){
+                                mydb.direcTable(getApplicationContext());
+                            }
+                            if(chit_m.equals("YES")){
+                                mydb.chitTable(getApplicationContext());
+                            }
+                            if(p_o_i.equals("YES")){
+                                mydb.poiTable(getApplicationContext());
+                            }
+                            if(p_o_o.equals("YES")){
+                                mydb.pooTable(getApplicationContext());
+                            }
                             Log.d("Day add: ", day);
                             try {
                                 d = Integer.parseInt(day);

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.munscore.WriteDetermine">
+
+    <CheckBox
+        android:id="@+id/dr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Mark on draft resolutions"
+        android:layout_below="@+id/dir"
+        android:layout_alignLeft="@+id/dir"
+        android:layout_alignStart="@+id/dir" />
+
+    <CheckBox
+        android:id="@+id/chits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Mark on chits"
+        android:layout_below="@+id/poi"
+        android:layout_alignLeft="@+id/poi"
+        android:layout_alignStart="@+id/poi" />
+
+    <CheckBox
+        android:id="@+id/poi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Mark on Points of Information"
+        android:layout_below="@+id/poo"
+        android:layout_centerHorizontal="true" />
+
+    <CheckBox
+        android:id="@+id/poo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Mark on Points of Order"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/poi"
+        android:layout_alignStart="@+id/poi" />
+
+    <CheckBox
+        android:id="@+id/dir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Mark on directives"
+        android:layout_below="@+id/chits"
+        android:layout_alignLeft="@+id/chits"
+        android:layout_alignStart="@+id/chits" />
+
+    <Button
+        android:id="@+id/next_but"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dr"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="Next" />
+</RelativeLayout>

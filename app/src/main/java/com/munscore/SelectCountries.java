@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SelectCountries extends AppCompatActivity {
@@ -48,8 +49,7 @@ public class SelectCountries extends AppCompatActivity {
 
     private void displayListView() {
         ListView lv = (ListView) findViewById(R.id.country_list);
-        String [] countries = {"Afghanistan",  "Albania", " Algeria",  "Andorra",  "Angola",  "Antigua and Barbuda",  "Argentina",   "Armenia", "Australia", "Austria", "Azerbaijan",  "The Bahamas",  "Bahrain People", "Bangladesh", "Barbados", " Belarus", "Belgium", "Belize", "Bhutan", " Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei Darussalam", "Bulgaria", "Burkina Faso", "Cambodia"," Cameroon"," Canada"," Cabo Verde",  "Central African Republic"," Chad"," Chile", "People's Republic of China", "Colombia ", "Comoros", " Congo", "Costa Rica", "Côte d’Ivoire", "Croatia", "Cuba"," Cyprus"," Czech Republic", "Democratic People’s  of Korea",  "Democratic Republic of the Congo", "Denmark", " Djibouti", " Dominica Dominican", "Republic of Ecuador",  "Egypt"," El Salvador", "Equatorial Guinea",  "Eritrea", "Estonia", "Ethiopia", "Republic of Fiji", "Finland", "France",  "Gabon", "Georgia",  "Germany",  "Ghana" ,"Greece", "Grenada", "Guatemala" , "Guinea", "Guinea-Bissau"," Guyana", "Haiti", "Honduras", " Hungary", "Iceland", "India", "Indonesia",  "Islamic Republic of Iran", "Republic of Iraq", "Ireland", "Israel", "Italy",  "Jamaica",  "Japan", "Jordan", "Kazakhstan", "Kenya", "Kuwait", "Kyrgyzstan", " Lao", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Monaco", "Mongolia", " Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Norway", "Oman", "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Republic  of Korea", "Moldova",  "Romania",  "Russian Federation", "Rwanda",  "Saint Kitts and Nevis", "Saint Lucia",  "Saint Vincent and the Grenadines",  "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovak Republic", "Slovenia",  "Solomon Islands", "Somalia", "South Africa", "South Sudan", "Spain",  "Sri Lanka", "Sudan", "Suriname", "Swaziland", "Sweden", "Switzerland",  "Syrian Arab Republic", " Tajikistan", "Thailand", "Yugoslav", "Macedonia", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey",  "Turkmenistan", "Tuvalu", "Uganda",  "Ukraine", "United Arab Emirates", " United Kingdom", "Tanzania",  "United States of America", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Viet Nam", "Yemen", " Zambia", "Zimbabwe"};
-
+        String [] countries = {"Afghanistan",  "Albania", "Algeria",  "Andorra",  "Angola",  "Antigua and Barbuda",  "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "The Bahamas",  "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei Darussalam", "Bulgaria", "Burkina Faso", "Cambodia", "Cameroon","Canada","Cabo Verde",  "Central African Republic","Chad","Chile", "China", "Colombia ", "Comoros", "Congo", "Costa Rica", "Côte d’Ivoire", "Croatia", "Cuba"," Cyprus","Czech Republic", "Democratic People’s  of Korea",  "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica Dominican", "Republic of Ecuador",  "Egypt","El Salvador", "Equatorial Guinea",  "Eritrea", "Estonia", "Ethiopia", "Republic of Fiji", "Finland", "France",  "Gabon", "Georgia",  "Germany",  "Ghana" ,"Greece", "Grenada", "Guatemala" , "Guinea", "Guinea-Bissau","Guyana", "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia",  "Islamic Republic of Iran", "Republic of Iraq", "Ireland", "Israel", "Italy",  "Jamaica",  "Japan", "Jordan", "Kazakhstan", "Kenya", "Kuwait", "Kyrgyzstan", "Lao", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Norway", "Oman", "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Republic  of Korea", "Moldova",  "Romania",  "Russian Federation", "Rwanda",  "Saint Kitts and Nevis", "Saint Lucia",  "Saint Vincent and the Grenadines",  "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovak Republic", "Slovenia",  "Solomon Islands", "Somalia", "South Africa", "South Sudan", "Spain",  "Sri Lanka", "Sudan", "Suriname", "Swaziland", "Sweden", "Switzerland",  "Syrian Arab Republic", "Tajikistan", "Thailand", "Yugoslav", "Macedonia", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey",  "Turkmenistan", "Tuvalu", "Uganda",  "Ukraine", "United Arab Emirates", "United Kingdom", "Tanzania",  "United States of America", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Viet Nam", "Yemen", "Zambia", "Zimbabwe"};
         //Array list of countries
         ArrayList<Country> countryList = new ArrayList<>();
         for( int i =0; i<countries.length; i++){
@@ -88,6 +88,27 @@ public class SelectCountries extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent in = getIntent();
+                        String dref_res, direct, chit_m, p_o_i, p_o_o;
+                        dref_res = in.getStringExtra("dr");
+                        direct = in.getStringExtra("dir");
+                        chit_m = in.getStringExtra("chit");
+                        p_o_i = in.getStringExtra("poi");
+                        p_o_o = in.getStringExtra("poo");
+                        if(dref_res.equals("YES")){
+                            mydb.drTable(getApplicationContext());
+                        }
+                        if(direct.equals("YES")){
+                            mydb.direcTable(getApplicationContext());
+                        }
+                        if(chit_m.equals("YES")){
+                            mydb.chitTable(getApplicationContext());
+                        }
+                        if(p_o_i.equals("YES")){
+                            mydb.poiTable(getApplicationContext());
+                        }
+                        if(p_o_o.equals("YES")){
+                            mydb.pooTable(getApplicationContext());
+                        }
                         name = in.getStringExtra("name");
                         day = in.getStringExtra("day");
                         Log.d("Day select: ", day);

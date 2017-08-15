@@ -7,12 +7,14 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     int day;
     View fabView;
+    private static final String COMMITTEE_TABLE_NAME = "committee";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +74,7 @@ public class MainActivity extends AppCompatActivity
         comm = (TextView) findViewById(R.id.committee);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        boolean a = mydb.checkDataBase(getApplicationContext());
-        Log.d("Table: ", String.valueOf(a));
-        if(mydb.isTableExists()){
+        if(mydb.isTableExist(COMMITTEE_TABLE_NAME)){
             setNavDraw();
         }
         else {
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity
         menu.findItem(R.id.action_create).setVisible(false);
         menu.findItem(R.id.action_home).setVisible(false);
         menu.findItem(R.id.action_deltext).setVisible(false);
-        if(!mydb.isTableExists()){
+        if(!mydb.isTableExist(COMMITTEE_TABLE_NAME)){
             menu.findItem(R.id.action_deltext).setVisible(false);
         }
         else{
@@ -128,6 +129,10 @@ public class MainActivity extends AppCompatActivity
         nav_item3.setEnabled(false);
         MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
         nav_item4.setEnabled(false);
+        MenuItem nav_item5 = menuNav.findItem(R.id.results);
+        nav_item5.setEnabled(false);
+        MenuItem n = menuNav.findItem(R.id.stats);
+        n.setEnabled(false);
     }
 
     @Override
@@ -147,14 +152,7 @@ public class MainActivity extends AppCompatActivity
                 public void onClick(DialogInterface dialog, int which) {
                     //mydb.delDb(getApplicationContext());
                     mydb.dropTab();
-                    fab.setVisibility(View.VISIBLE);
-                    Menu menuNav = navigationView.getMenu();
-                    MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
-                    nav_item2.setEnabled(false);
-                    MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
-                    nav_item3.setEnabled(false);
-                    MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
-                    nav_item4.setEnabled(false);
+                    hideFrag();
                     navigationView.setCheckedItem(R.id.home);
                     FragmentTransaction transaction = getFragmentManager().beginTransaction();
                     transaction.replace(R.id.content_frame, new Home()).commit();
@@ -208,11 +206,15 @@ public class MainActivity extends AppCompatActivity
             MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
             nav_item4.setEnabled(true);
         }
+        MenuItem m = menuNav.findItem(R.id.results);
+        m.setEnabled(true);
+        MenuItem n = menuNav.findItem(R.id.stats);
+        n.setEnabled(true);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -233,6 +235,50 @@ public class MainActivity extends AppCompatActivity
             case R.id.day_three:
                 transaction.replace(R.id.content_frame, new DayThree()).commit();
                 break;
+
+            case R.id.results:
+                Menu menuNav = navigationView.getMenu();
+                MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
+                if(nav_item2.isEnabled()) {
+                    AlertDialog.Builder al = new AlertDialog.Builder(MainActivity.this);
+                    al.setMessage("Are you sure you want to calculate the final result? Doing so will not allow you to change/add any more scores.");
+                    al.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Menu menuNav = navigationView.getMenu();
+                            MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
+                            nav_item2.setEnabled(false);
+                            MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
+                            nav_item3.setEnabled(false);
+                            MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
+                            nav_item4.setEnabled(false);
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.content_frame, new Result()).commit();
+                        }
+                    });
+                    al.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            navigationView.setCheckedItem(R.id.home);
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.content_frame, new Home()).commit();
+                        }
+                    });
+                    al.setCancelable(false);
+                    al.show();
+                }
+                else{
+                    transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.content_frame, new Result()).commit();
+                }
+                //transaction.replace(R.id.content_frame, new Result()).commit();
+                break;
+
+            case R.id.stats:
+                Intent in = new Intent(MainActivity.this, CommitteeStats.class);
+                startActivityForResult(in, 5);
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -246,7 +292,6 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == COMMITTEE_PERM){
             if(resultCode == RESULT_OK){
                 Toast.makeText(MainActivity.this, "Committee created!", Toast.LENGTH_LONG).show();
-                //new GetDetails().execute();
                 setNavDraw();
                 this.invalidateOptionsMenu();
                 navigationView.setCheckedItem(R.id.home);
@@ -254,14 +299,13 @@ public class MainActivity extends AppCompatActivity
                 transaction.replace(R.id.content_frame, new Home()).commit();
             }
         }
+        if(requestCode == 5){
+            if(resultCode == RESULT_OK){
+                navigationView.setCheckedItem(R.id.home);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.content_frame, new Home()).commit();
+            }
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-    /*public int Days(){
-        Cursor res = mydb.getDays();
-        res.moveToFirst();
-        int temp = res.getInt(res.getColumnIndex(DBHelper.DAYS));
-        Log.d("temp: ", Integer.toString(temp));
-        return res.getInt(res.getColumnIndex(DBHelper.DAYS));
-    }*/
 }

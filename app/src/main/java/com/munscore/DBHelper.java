@@ -12,7 +12,15 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by user on 7/20/2017.
@@ -24,6 +32,11 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String COMMITTEE_TABLE_NAME = "committee";
     private static final String COUNTRY_TABLE_NAME = "country";
     private static final String JUDGE_TABLE_NAME = "judge";
+    private static final String POINT_OF_INFO = "point_of_info";
+    private static final String POINT_OF_ORDER = "point_of_order";
+    private static final String CHIT = "chit";
+    private static final String DR = "draft_reso";
+    private static final String DIRECTIVE = "directive";
     public static final String COMMITTEE_NAME = "committee_name";
     //public static final String DAYS = "days";
 
@@ -50,10 +63,10 @@ public class DBHelper extends SQLiteOpenHelper {
             myDataBase.execSQL("create table if not exists " + COUNTRY_TABLE_NAME + "(com_id integer, country text, foreign key (com_id) references " + COMMITTEE_TABLE_NAME +"(id))");
             String q;
             int i;
-            q = countries[0] + " integer,";
+            q = countries[0] + " float,";
             for (i = 1; i < countries.length ; i++) {
                 q += countries[i];
-                q += " integer";
+                q += " float";
                 q += ", ";
             }
             //q += countries[i] + " integer,";
@@ -81,7 +94,185 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean isTableExists() {
+    void poiTable(Context context){
+        try{
+            SQLiteDatabase db = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
+            db.execSQL("create table if not exists " + POINT_OF_INFO + "(poi_id integer primary key AUTOINCREMENT NOT NULL, day integer, country_name text, score float, foreign key (country_name) references " + COUNTRY_TABLE_NAME+ "(country))");
+            Log.d("Tables: ", db.toString());
+            SQLiteDatabase db_one = getReadableDatabase();
+            String tableString = String.format("Table %s:\n", POINT_OF_INFO);
+            Cursor allRows  = db_one.rawQuery("SELECT * FROM " + POINT_OF_INFO, null);
+            if (allRows.moveToFirst() ){
+                String[] columnNames = allRows.getColumnNames();
+                do {
+                    for (String vname: columnNames) {
+                        tableString += String.format("%s: %s\n", vname,
+                                allRows.getString(allRows.getColumnIndex(vname)));
+                    }
+                    tableString += "\n";
+
+                } while (allRows.moveToNext());
+            }
+            Log.d("Rows comm: ", tableString);
+        }
+        catch(SQLiteException e){
+            e.printStackTrace();
+        }
+    }
+
+    void InsertTabScore(Context context, String country, String name, int day, int score){
+        try{
+            SQLiteDatabase dbname = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
+            /*String INSERT="insert into "+ JUDGE_TABLE_NAME + "(country_name,"+titleString+"day)"+ " values" +"('" + name + "'," + markString + String.valueOf(day) + ")";
+            System.out.println("Insert statement: "+INSERT);*/
+            String INSERT = "insert into " + name + "(country_name, day, score) values ('" + country +"'," + String.valueOf(day) + "," + String.valueOf(score) + ")";
+            System.out.println("Insert statement: "+INSERT);
+            SQLiteStatement insertStmt = dbname.compileStatement(INSERT);
+            insertStmt.executeInsert();
+            SQLiteDatabase db = getReadableDatabase();
+            String tableString = String.format("Table %s:\n", name);
+            Cursor allRows  = db.rawQuery("SELECT * FROM " + name, null);
+            if (allRows.moveToFirst() ){
+                String[] columnNames = allRows.getColumnNames();
+                do {
+                    for (String vname: columnNames) {
+                        tableString += String.format("%s: %s\n", vname,
+                                allRows.getString(allRows.getColumnIndex(vname)));
+                    }
+                    tableString += "\n";
+
+                } while (allRows.moveToNext());
+            }
+            Log.d("Rows comm: ", tableString);
+        }
+        catch (SQLiteException e){
+            e.printStackTrace();
+        }
+    }
+
+    void pooTable(Context context){
+        try{
+            SQLiteDatabase db = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
+            db.execSQL("create table if not exists " + POINT_OF_ORDER + "(poo_id integer primary key AUTOINCREMENT NOT NULL, day integer, country_name text, score float, foreign key (country_name) references " + COUNTRY_TABLE_NAME+ "(country))");
+            Log.d("Tables: ", db.toString());
+            SQLiteDatabase db_one = getReadableDatabase();
+            String tableString = String.format("Table %s:\n", POINT_OF_ORDER);
+            Cursor allRows  = db_one.rawQuery("SELECT * FROM " + POINT_OF_ORDER, null);
+            if (allRows.moveToFirst() ){
+                String[] columnNames = allRows.getColumnNames();
+                do {
+                    for (String vname: columnNames) {
+                        tableString += String.format("%s: %s\n", vname,
+                                allRows.getString(allRows.getColumnIndex(vname)));
+                    }
+                    tableString += "\n";
+
+                } while (allRows.moveToNext());
+            }
+            Log.d("Rows comm: ", tableString);
+        }
+        catch(SQLiteException e){
+            e.printStackTrace();
+        }
+    }
+
+    void chitTable(Context context){
+        try{
+            SQLiteDatabase db = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
+            db.execSQL("create table if not exists " + CHIT + "(chit_id integer primary key AUTOINCREMENT NOT NULL, day integer, country_name text, score float, foreign key (country_name) references " + COUNTRY_TABLE_NAME+ "(country))");
+            Log.d("Tables: ", db.toString());
+            SQLiteDatabase db_one = getReadableDatabase();
+            String tableString = String.format("Table %s:\n", CHIT);
+            Cursor allRows  = db_one.rawQuery("SELECT * FROM " + CHIT, null);
+            if (allRows.moveToFirst() ){
+                String[] columnNames = allRows.getColumnNames();
+                do {
+                    for (String vname: columnNames) {
+                        tableString += String.format("%s: %s\n", vname,
+                                allRows.getString(allRows.getColumnIndex(vname)));
+                    }
+                    tableString += "\n";
+
+                } while (allRows.moveToNext());
+            }
+            Log.d("Rows comm: ", tableString);
+        }
+        catch(SQLiteException e){
+            e.printStackTrace();
+        }
+    }
+
+    void drTable(Context context){
+        try{
+            SQLiteDatabase db = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
+            db.execSQL("create table if not exists " + DR + "(chit_id integer primary key AUTOINCREMENT NOT NULL, day integer, country_name text, score float, foreign key (country_name) references " + COUNTRY_TABLE_NAME+ "(country))");
+            Log.d("Tables: ", db.toString());
+            SQLiteDatabase db_one = getReadableDatabase();
+            String tableString = String.format("Table %s:\n", DR);
+            Cursor allRows  = db_one.rawQuery("SELECT * FROM " + DR, null);
+            if (allRows.moveToFirst() ){
+                String[] columnNames = allRows.getColumnNames();
+                do {
+                    for (String vname: columnNames) {
+                        tableString += String.format("%s: %s\n", vname,
+                                allRows.getString(allRows.getColumnIndex(vname)));
+                    }
+                    tableString += "\n";
+
+                } while (allRows.moveToNext());
+            }
+            Log.d("Rows comm: ", tableString);
+        }
+        catch(SQLiteException e){
+            e.printStackTrace();
+        }
+    }
+
+    void direcTable(Context context){
+        try{
+            SQLiteDatabase db = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
+            db.execSQL("create table if not exists " + DIRECTIVE + "(chit_id integer primary key AUTOINCREMENT NOT NULL, day integer, country_name text, score float, foreign key (country_name) references " + COUNTRY_TABLE_NAME+ "(country))");
+            Log.d("Tables: ", db.toString());
+            SQLiteDatabase db_one = getReadableDatabase();
+            String tableString = String.format("Table %s:\n", DIRECTIVE);
+            Cursor allRows  = db_one.rawQuery("SELECT * FROM " + DIRECTIVE, null);
+            if (allRows.moveToFirst() ){
+                String[] columnNames = allRows.getColumnNames();
+                do {
+                    for (String vname: columnNames) {
+                        tableString += String.format("%s: %s\n", vname,
+                                allRows.getString(allRows.getColumnIndex(vname)));
+                    }
+                    tableString += "\n";
+
+                } while (allRows.moveToNext());
+            }
+            Log.d("Rows comm: ", tableString);
+        }
+        catch(SQLiteException e){
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isTableExist(String name) {
+        SQLiteDatabase mDatabase = this.getReadableDatabase();
+        if(!mDatabase.isReadOnly()) {
+            mDatabase.close();
+            mDatabase = getReadableDatabase();
+        }
+        //Cursor cursor = mDatabase.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+name+"'", null);
+        Cursor cursor = mDatabase.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='"+ name + "'", null);
+        if(cursor!=null) {
+            if(cursor.getCount()>0) {
+                cursor.close();
+                return true;
+            }
+            cursor.close();
+        }
+        return false;
+    }
+
+    /*public boolean isTableExists() {
         SQLiteDatabase mDatabase = this.getReadableDatabase();
         if(!mDatabase.isReadOnly()) {
             mDatabase.close();
@@ -96,11 +287,74 @@ public class DBHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return false;
-    }
+    }*/
 
     int getSpeechCount(String name, int day){
         SQLiteDatabase db = getWritableDatabase();
         Cursor c = db.rawQuery("select count(*) from " + JUDGE_TABLE_NAME + " where country_name = '" + name + "' and day=" + String.valueOf(day), null);
+        c.moveToFirst();
+        int temp = c.getInt(0);
+        Log.d("Value: ", String.valueOf(temp));
+        return temp;
+    }
+
+    int getPooCount(String name, int day){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.rawQuery("select count(*) from " + POINT_OF_ORDER + " where country_name = '" + name + "' and day=" + String.valueOf(day), null);
+        c.moveToFirst();
+        int temp = c.getInt(0);
+        Log.d("Value: ", String.valueOf(temp));
+        return temp;
+    }
+
+    int getPoiCount(String name, int day){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.rawQuery("select count(*) from " + POINT_OF_INFO + " where country_name = '" + name + "' and day=" + String.valueOf(day), null);
+        c.moveToFirst();
+        int temp = c.getInt(0);
+        Log.d("Value: ", String.valueOf(temp));
+        return temp;
+    }
+
+    int getChitCount(String name, int day){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.rawQuery("select count(*) from " + CHIT + " where country_name = '" + name + "' and day=" + String.valueOf(day), null);
+        c.moveToFirst();
+        int temp = c.getInt(0);
+        Log.d("Value: ", String.valueOf(temp));
+        return temp;
+    }
+
+    int getDrCount(String name, int day){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.rawQuery("select count(*) from " + DR + " where country_name = '" + name + "' and day=" + String.valueOf(day), null);
+        c.moveToFirst();
+        int temp = c.getInt(0);
+        Log.d("Value: ", String.valueOf(temp));
+        return temp;
+    }
+
+    int getDirCount(String name, int day){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.rawQuery("select count(*) from " + DIRECTIVE + " where country_name = '" + name + "' and day=" + String.valueOf(day), null);
+        c.moveToFirst();
+        int temp = c.getInt(0);
+        Log.d("Value: ", String.valueOf(temp));
+        return temp;
+    }
+
+    int getPoints(String a){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.rawQuery("select count(*) from " + a, null);
+        c.moveToFirst();
+        int temp = c.getInt(0);
+        Log.d("Value: ", String.valueOf(temp));
+        return temp;
+    }
+
+    private int getSpeech(){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.rawQuery("select count(*) from " + JUDGE_TABLE_NAME , null);
         c.moveToFirst();
         int temp = c.getInt(0);
         Log.d("Value: ", String.valueOf(temp));
@@ -173,11 +427,83 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    HashMap<String, Float> calFinalSpeechScore(Context context, ArrayList<String> coun, ArrayList<String> b){
+        HashMap<String, Float> f = new HashMap<>();
+        try{
+            SQLiteDatabase db = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
+            int i;
+            for(i=0; i<coun.size(); i++){
+                Float score = 0.0f;
+                for(int j=0; j<b.size(); j++) {
+                    String query = "SELECT SUM(" + b.get(j) + ") from " + JUDGE_TABLE_NAME + " where country_name = '" + coun.get(i) + "'";
+                    Cursor c = db.rawQuery(query, null);
+                    if (c != null) {
+                        c.moveToFirst();
+                        do {
+                            score = score + c.getFloat(0);
+                            Log.d("Score: " + coun.get(i) + Integer.toString(j), Float.toString(score));
+                        } while (c.moveToNext());
+                    }
+                    int speech_count = getSpeech();
+                    Log.d(coun.get(i), Integer.toString(speech_count));
+                    if(speech_count != 0){
+                        f.put(coun.get(i), score/speech_count);
+                    }
+                    else{
+                        f.put(coun.get(i), score);
+                    }
+                    Log.d("Hashmap: ", f.toString());
+                }
+            }
+        }
+        catch(SQLiteException e){
+            e.printStackTrace();
+        }
+        Log.d("My map: ", f.toString());
+        return f;
+    }
+
+    HashMap<String, Float> calPointScore(Context context, ArrayList<String> coun, String table_name){
+        HashMap<String, Float> f = new HashMap<>();
+        try{
+            SQLiteDatabase db = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
+            int i;
+            for(i=0; i<coun.size(); i++){
+                Float score = 0.0f;
+                String query = "SELECT SUM(score) from " + table_name + " where country_name = '" + coun.get(i) + "'";
+                Cursor c = db.rawQuery(query, null);
+                if (c != null) {
+                    c.moveToFirst();
+                    do {
+                        score = score + c.getFloat(0);
+                        Log.d("Score: " + coun.get(i), Float.toString(score));
+                    } while (c.moveToNext());
+                }
+                int speech_count = getPoints(table_name);
+                Log.d(coun.get(i), Integer.toString(speech_count));
+                if(speech_count != 0){
+                    f.put(coun.get(i), score/speech_count);
+                }
+                else{
+                    f.put(coun.get(i), score);
+                }
+                Log.d("Hashmap: ", f.toString());
+            }
+        }
+        catch(SQLiteException e){
+            e.printStackTrace();
+        }
+        Log.d("My map: ", f.toString());
+        return f;
+    }
+
+
+
     void insertScore(Context context, String [] a, String [] b, int day, String name){
         try{
             SQLiteDatabase myDataBase = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
-            String titleString=null;
-            String markString= null;
+            String titleString;
+            String markString;
             int i;
             titleString = "";
             markString = "";
@@ -189,45 +515,27 @@ public class DBHelper extends SQLiteOpenHelper {
                 markString += b[i];
                 markString += ",";
             }
-            //titleString+= a[i];
-            //markString += "?";
-
-            //System.out.println("Title String: "+titleString);
-            //System.out.println("Mark String: "+markString);
 
 
             String INSERT="insert into "+ JUDGE_TABLE_NAME + "(country_name,"+titleString+"day)"+ " values" +"('" + name + "'," + markString + String.valueOf(day) + ")";
             System.out.println("Insert statement: "+INSERT);
-            //System.out.println("Array size iiiiii::: "+array_vals.size());
-            //this.insertStmt = this.myDataBase.compileStatement(INSERT);
-            int s=0;
-
             SQLiteStatement insertStmt = myDataBase.compileStatement(INSERT);
             insertStmt.executeInsert();
-            //insertStmt.executeInsert();
-            /*while(s<b.length){
+            SQLiteDatabase db = getReadableDatabase();
+            String tableString = String.format("Table %s:\n", JUDGE_TABLE_NAME);
+            Cursor allRows  = db.rawQuery("SELECT * FROM " + JUDGE_TABLE_NAME, null);
+            if (allRows.moveToFirst() ){
+                String[] columnNames = allRows.getColumnNames();
+                do {
+                    for (String vname: columnNames) {
+                        tableString += String.format("%s: %s\n", vname,
+                                allRows.getString(allRows.getColumnIndex(vname)));
+                    }
+                    tableString += "\n";
 
-                System.out.println("Size of array1"+b.length);
-                //System.out.println("Size of array"+title.size());
-                int j=1;
-                insertStmt = myDataBase.compileStatement(INSERT);
-                for(int k =0;k< a.length;k++)
-                {
-
-                    //System.out.println("Value of column "+title+" is "+array_vals.get(k+s));
-                    //System.out.println("PRINT S:"+array_vals.get(k+s));
-                    System.out.println("BindString: insertStmt.bindString("+j+","+ b[k+s]+")");
-                    insertStmt.bindString(j, b[k+s]);
-
-
-
-                    j++;
-                }
-
-                s+=a.length;
-
+                } while (allRows.moveToNext());
             }
-            insertStmt.executeInsert();*/
+            Log.d("Rows comm: ", tableString);
         }
         catch(SQLException e){
             e.printStackTrace();
@@ -285,6 +593,11 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS committee");
             db.execSQL("DROP TABLE IF EXISTS country");
             db.execSQL("DROP TABLE IF EXISTS judge");
+            db.execSQL("DROP TABLE IF EXISTS point_of_order");
+            db.execSQL("DROP TABLE IF EXISTS point_of_info");
+            db.execSQL("DROP TABLE IF EXISTS draft_reso");
+            db.execSQL("DROP TABLE IF EXISTS chit");
+            db.execSQL("DROP TABLE IF EXISTS directive");
             return true;
         }
         catch (SQLException e){
@@ -300,4 +613,15 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS judge");
         onCreate(db);
     }
+
+    String[] getCol(String b) {
+        SQLiteDatabase m=getReadableDatabase();
+        Cursor dbCursor = m.query(b, null, null, null, null, null, null);
+        String [] a= dbCursor.getColumnNames();
+        for (String anA : a) {
+            Log.d("Column: ", anA);
+        }
+        return dbCursor.getColumnNames();
+    }
+
 }

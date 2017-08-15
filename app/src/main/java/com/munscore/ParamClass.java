@@ -43,8 +43,14 @@ public class ParamClass extends AppCompatActivity {
             public void onClick(View v) {
                 String [] cr = getEditText();
                 if(cr != null) {
+                    String dref_res, direct, chit_m, p_o_i, p_o_o;
                     Log.d("Array: ", Arrays.toString(cr));
                     Intent i = getIntent();
+                    dref_res = i.getStringExtra("dr");
+                    direct = i.getStringExtra("dir");
+                    chit_m = i.getStringExtra("chit");
+                    p_o_i = i.getStringExtra("poi");
+                    p_o_o = i.getStringExtra("poo");
                     String name = i.getStringExtra("name");
                     String day = i.getStringExtra("day");
                     Log.d("Day param: ", day);
@@ -54,6 +60,11 @@ public class ParamClass extends AppCompatActivity {
                     Bundle b = new Bundle();
                     b.putStringArray("criteria", cr);
                     in.putExtras(b);
+                    in.putExtra("chit", chit_m);
+                    in.putExtra("poi", p_o_i);
+                    in.putExtra("poo", p_o_o);
+                    in.putExtra("dir", direct);
+                    in.putExtra("dr", dref_res);
                     startActivityForResult(in, PERM);
                 }
             }
@@ -64,10 +75,16 @@ public class ParamClass extends AppCompatActivity {
             public void onClick(View v) {
                 String [] cr = getEditText();
                 if(cr != null) {
+                    String dref_res, direct, chit_m, p_o_i, p_o_o;
                     Log.d("Array: ", Arrays.toString(cr));
                     Intent i = getIntent();
                     String name = i.getStringExtra("name");
                     String day = i.getStringExtra("day");
+                    dref_res = i.getStringExtra("dr");
+                    direct = i.getStringExtra("dir");
+                    chit_m = i.getStringExtra("chit");
+                    p_o_i = i.getStringExtra("poi");
+                    p_o_o = i.getStringExtra("poo");
                     Log.d("Day param: ", day);
                     Intent in = new Intent(ParamClass.this, SelectCountries.class);
                     in.putExtra("name", name);
@@ -75,6 +92,11 @@ public class ParamClass extends AppCompatActivity {
                     Bundle b = new Bundle();
                     b.putStringArray("criteria", cr);
                     in.putExtras(b);
+                    in.putExtra("chit", chit_m);
+                    in.putExtra("poi", p_o_i);
+                    in.putExtra("poo", p_o_o);
+                    in.putExtra("dir", direct);
+                    in.putExtra("dr", dref_res);
                     startActivityForResult(in, PERM);
                 }
             }
@@ -103,7 +125,7 @@ public class ParamClass extends AppCompatActivity {
         switch (requestCode){
             case PERM:
                 if(resultCode == RESULT_OK){
-                    Intent in = new Intent(ParamClass.this, CommitteeActivity.class);
+                    Intent in = new Intent(ParamClass.this, WriteDetermine.class);
                     setResult(Activity.RESULT_OK, in);
                     finish();
                 }

@@ -33,6 +33,7 @@ public class Home extends Fragment {
     ArrayList<String> coun_names = new ArrayList<>();
     DBHelper mydb;
     TextView name, comm;
+    private static final String COMMITTEE_TABLE_NAME = "committee";
 
     @Nullable
     @Override
@@ -42,7 +43,7 @@ public class Home extends Fragment {
         mydb = new DBHelper(getActivity());
         name =  (TextView) v.findViewById(R.id.name);
         comm = (TextView) v.findViewById(R.id.committee);
-        if(mydb.isTableExists()){
+        if(mydb.isTableExist(COMMITTEE_TABLE_NAME)){
             new Home.GetDetails().execute();
         }
         else {

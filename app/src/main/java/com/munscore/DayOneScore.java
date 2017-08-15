@@ -1,19 +1,16 @@
 package com.munscore;
 
-import android.app.ActionBar;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,6 +26,12 @@ public class DayOneScore extends AppCompatActivity {
     View parent;
     String [] c, cr;
     String name;
+    private static final String JUDGE_TABLE_NAME = "judge";
+    private static final String POINT_OF_INFO = "point_of_info";
+    private static final String POINT_OF_ORDER = "point_of_order";
+    private static final String CHIT = "chit";
+    private static final String DR = "draft_reso";
+    private static final String DIRECTIVE = "directive";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +73,26 @@ public class DayOneScore extends AppCompatActivity {
                     al.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            mydb.insertScore(getApplicationContext(), cr, c, 1, name);
+                            Intent i = getIntent();
+                            String type = i.getStringExtra("type");
+                            if(type.equals("poo")){
+                                mydb.InsertTabScore(getApplicationContext(), name, POINT_OF_ORDER, 1, Integer.parseInt(c[0]));
+                            }
+                            if(type.equals("poi")){
+                                mydb.InsertTabScore(getApplicationContext(), name, POINT_OF_INFO, 1, Integer.parseInt(c[0]));
+                            }
+                            if(type.equals("chit")){
+                                mydb.InsertTabScore(getApplicationContext(), name, CHIT, 1, Integer.parseInt(c[0]));
+                            }
+                            if(type.equals("speech")){
+                                mydb.insertScore(getApplicationContext(), cr, c, 1, name);
+                            }
+                            if(type.equals("dr")){
+                                mydb.InsertTabScore(getApplicationContext(), name, DR, 1, Integer.parseInt(c[0]));
+                            }
+                            if(type.equals("dir")){
+                                mydb.InsertTabScore(getApplicationContext(), name, DIRECTIVE, 1, Integer.parseInt(c[0]));
+                            }
                             Intent in = new Intent(getApplicationContext(), CountryDetails.class);
                             setResult(RESULT_OK, in);
                             finish();
@@ -91,7 +113,27 @@ public class DayOneScore extends AppCompatActivity {
 
     void addTextBoxes(){
         LinearLayout score_lay = (LinearLayout) findViewById(R.id.score_lay);
-        String [] col_name = mydb.getJudgeCol();
+        Intent in = getIntent();
+        String type = in.getStringExtra("type");
+        String [] col_name = new String[0];
+        if(type.equals("poo")){
+            col_name = mydb.getCol(POINT_OF_ORDER);
+        }
+        if(type.equals("poi")){
+            col_name = mydb.getCol(POINT_OF_INFO);
+        }
+        if(type.equals("chit")){
+            col_name = mydb.getCol(CHIT);
+        }
+        if(type.equals("speech")){
+            col_name = mydb.getCol(JUDGE_TABLE_NAME);
+        }
+        if(type.equals("dr")){
+            col_name = mydb.getCol(DR);
+        }
+        if(type.equals("dir")){
+            col_name = mydb.getCol(DIRECTIVE);
+        }
         for (int i=3; i<col_name.length; i++) {
             TextView tv = new TextView(DayOneScore.this);
             EditText ed = new EditText(DayOneScore.this);

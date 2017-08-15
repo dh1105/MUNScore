@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
-        android:text="Countries and scores day 3"
+        android:text="@string/countries_day_3"
         android:textAlignment="center"
         android:textColor="@android:color/black"
         android:textSize="18sp" />

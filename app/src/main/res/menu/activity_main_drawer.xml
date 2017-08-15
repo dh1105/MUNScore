@@ -4,29 +4,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/home"
-            android:title="Home" />
+            android:title="@string/home" />
         <item
             android:id="@+id/day_one"
-            android:title="Day 1" />
+            android:title="@string/day_1" />
         <item
             android:id="@+id/day_two"
-            android:title="Day 2" />
+            android:title="@string/day_2" />
         <item
             android:id="@+id/day_three"
-            android:title="Day 3" />
+            android:title="@string/day_3" />
+        <item
+            android:id="@+id/stats"
+            android:title="@string/committee_stats"/>
+        <item
+            android:id="@+id/results"
+            android:title="@string/results"/>
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
 
 </menu>
