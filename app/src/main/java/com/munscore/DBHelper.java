@@ -12,15 +12,8 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by user on 7/20/2017.
@@ -37,6 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String CHIT = "chit";
     private static final String DR = "draft_reso";
     private static final String DIRECTIVE = "directive";
+    private static final String RESULT = "result";
     public static final String COMMITTEE_NAME = "committee_name";
     //public static final String DAYS = "days";
 
@@ -254,7 +248,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean isTableExist(String name) {
+    boolean isTableExist(String name) {
         SQLiteDatabase mDatabase = this.getReadableDatabase();
         if(!mDatabase.isReadOnly()) {
             mDatabase.close();
@@ -271,23 +265,6 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return false;
     }
-
-    /*public boolean isTableExists() {
-        SQLiteDatabase mDatabase = this.getReadableDatabase();
-        if(!mDatabase.isReadOnly()) {
-            mDatabase.close();
-            mDatabase = getReadableDatabase();
-        }
-        Cursor cursor = mDatabase.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+COMMITTEE_TABLE_NAME+"'", null);
-        if(cursor!=null) {
-            if(cursor.getCount()>0) {
-                cursor.close();
-                return true;
-            }
-            cursor.close();
-        }
-        return false;
-    }*/
 
     int getSpeechCount(String name, int day){
         SQLiteDatabase db = getWritableDatabase();
@@ -343,7 +320,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return temp;
     }
 
-    int getPoints(String a){
+    private int getPoints(String a){
         SQLiteDatabase db = getWritableDatabase();
         Cursor c = db.rawQuery("select count(*) from " + a, null);
         c.moveToFirst();
@@ -369,6 +346,24 @@ public class DBHelper extends SQLiteOpenHelper {
             Log.d("Column: ", anA);
         }
         return dbCursor.getColumnNames();
+    }
+
+    boolean getResultQuery(){
+        SQLiteDatabase mDatabase = this.getReadableDatabase();
+        if(!mDatabase.isReadOnly()) {
+            mDatabase.close();
+            mDatabase = getReadableDatabase();
+        }
+        //Cursor cursor = mDatabase.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+name+"'", null);
+        Cursor cursor = mDatabase.rawQuery("SELECT * from " + RESULT, null);
+        if(cursor!=null) {
+            if(cursor.getCount()>0) {
+                cursor.close();
+                return true;
+            }
+            cursor.close();
+        }
+        return false;
     }
 
     boolean insertCommittee(String name, int id, int day){
@@ -497,7 +492,49 @@ public class DBHelper extends SQLiteOpenHelper {
         return f;
     }
 
+    void createResultTable(Context context){
+        try{
+            SQLiteDatabase db = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
+            db.execSQL("create table if not exists " + RESULT + "(result_id integer primary key AUTOINCREMENT NOT NULL, country_name text, score float)");
+        }
+        catch(SQLiteException e){
+            e.printStackTrace();
+        }
+    }
 
+    void insertResultTable(HashMap<String, Float> hmap, Context context){
+        try{
+            SQLiteDatabase db = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
+            ArrayList<String> countries;
+            countries = getCountryName();
+            for(String coun: hmap.keySet()){
+                countries.add(coun);
+            }
+            ContentValues contentValues = new ContentValues();
+            for(int i=0; i<hmap.size(); i++){
+                contentValues.put("country_name", countries.get(i));
+                contentValues.put("score", hmap.get(countries.get(i)));
+                db.insert(RESULT, null, contentValues);
+            }
+            String tableString = String.format("Table %s:\n", RESULT);
+            Cursor allRows  = db.rawQuery("SELECT * FROM " + RESULT, null);
+            if (allRows.moveToFirst() ){
+                String[] columnNames = allRows.getColumnNames();
+                do {
+                    for (String name: columnNames) {
+                        tableString += String.format("%s: %s\n", name,
+                                allRows.getString(allRows.getColumnIndex(name)));
+                    }
+                    tableString += "\n";
+
+                } while (allRows.moveToNext());
+            }
+            Log.d("Rows country: ", tableString);
+        }
+        catch (SQLiteException e){
+            e.printStackTrace();
+        }
+    }
 
     void insertScore(Context context, String [] a, String [] b, int day, String name){
         try{
@@ -598,6 +635,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS draft_reso");
             db.execSQL("DROP TABLE IF EXISTS chit");
             db.execSQL("DROP TABLE IF EXISTS directive");
+            db.execSQL("DROP TABLE IF EXISTS result");
             return true;
         }
         catch (SQLException e){

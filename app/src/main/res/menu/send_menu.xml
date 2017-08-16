@@ -7,4 +7,10 @@
         android:icon="@android:drawable/ic_menu_send"
         android:title="Send details"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_del"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="Delete committee"
+        app:showAsAction="ifRoom" />
 </menu>

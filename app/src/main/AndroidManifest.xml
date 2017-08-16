@@ -82,10 +82,12 @@
                 android:value="com.munscore.MainActivity" />
         </activity>
         <activity android:name=".CalculateResult" />
-        <activity android:name=".WriteDetermine"
-            android:parentActivityName=".CommitteeActivity"
+        <activity
+            android:name=".WriteDetermine"
             android:launchMode="singleTop"
+            android:parentActivityName=".CommitteeActivity"
             tools:targetApi="jelly_bean" />
+        <activity android:name=".ResultFill"></activity>
     </application>
 
 </manifest>

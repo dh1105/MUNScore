@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     int day;
     View fabView;
     private static final String COMMITTEE_TABLE_NAME = "committee";
+    private static final String RESULT = "result";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,12 @@ public class MainActivity extends AppCompatActivity
         comm = (TextView) findViewById(R.id.committee);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        if(mydb.isTableExist(RESULT)){
+            Intent in = new Intent(MainActivity.this, ResultFill.class);
+            //finish();
+            //in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivityForResult(in, 6);
+        }
         if(mydb.isTableExist(COMMITTEE_TABLE_NAME)){
             setNavDraw();
         }
@@ -133,6 +140,20 @@ public class MainActivity extends AppCompatActivity
         nav_item5.setEnabled(false);
         MenuItem n = menuNav.findItem(R.id.stats);
         n.setEnabled(false);
+    }
+
+    public void ResultCheck(){
+        Menu menuNav = navigationView.getMenu();
+        MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
+        nav_item2.setEnabled(false);
+        MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
+        nav_item3.setEnabled(false);
+        MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
+        nav_item4.setEnabled(false);
+        MenuItem nav_item5 = menuNav.findItem(R.id.results);
+        nav_item5.setEnabled(true);
+        MenuItem n = menuNav.findItem(R.id.stats);
+        n.setEnabled(true);
     }
 
     @Override
@@ -252,8 +273,10 @@ public class MainActivity extends AppCompatActivity
                             nav_item3.setEnabled(false);
                             MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
                             nav_item4.setEnabled(false);
-                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                            transaction.replace(R.id.content_frame, new Result()).commit();
+                            Intent in = new Intent(MainActivity.this, ResultFill.class);
+                            //finish();
+                            //in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivityForResult(in, 6);
                         }
                     });
                     al.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -268,11 +291,6 @@ public class MainActivity extends AppCompatActivity
                     al.setCancelable(false);
                     al.show();
                 }
-                else{
-                    transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.content_frame, new Result()).commit();
-                }
-                //transaction.replace(R.id.content_frame, new Result()).commit();
                 break;
 
             case R.id.stats:
@@ -285,6 +303,8 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -304,6 +324,22 @@ public class MainActivity extends AppCompatActivity
                 navigationView.setCheckedItem(R.id.home);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame, new Home()).commit();
+            }
+        }
+        if(requestCode == 6){
+            if(resultCode == RESULT_OK){
+                Log.d("Deleted", "Comm");
+                Log.d("Starting", "Main");
+                recreate();
+                /*hideFrag();
+                //this.invalidateOptionsMenu();
+                //navigationView.setCheckedItem(R.id.home);
+                navigationView.setCheckedItem(R.id.home);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.content_frame, new Home()).commit();
+                coun_names.clear();
+                Snackbar.make(fabView, "Committee deleted", Snackbar.LENGTH_LONG).show();
+                MainActivity.this.invalidateOptionsMenu();*/
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

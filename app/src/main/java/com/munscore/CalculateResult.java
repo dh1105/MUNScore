@@ -1,7 +1,11 @@
 package com.munscore;
 
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -83,6 +87,15 @@ public class CalculateResult extends AppCompatActivity {
         names  = addText(best_del, "Best Delegate", names);
         names = addText(high_comm, "High Commendation", names);
         addText(spec_men, "Special Mention", names);
+        Log.d("Not Inserting", "Res");
+        if(!mydb.getResultQuery()) {
+            Log.d("Inserting", "Res");
+            InsertandCreateRes(hmap);
+        }
+    }
+
+    void InsertandCreateRes(HashMap<String, Float> hmap){
+        mydb.insertResultTable(hmap, getApplicationContext());
     }
 
     private HashMap<String, Float> TotScore(HashMap<String, Float> hmap, HashMap<String, Float> poi, HashMap<String, Float> poo, HashMap<String, Float> chit, HashMap<String, Float> dr, HashMap<String, Float> dir, ArrayList<String> c){
@@ -198,6 +211,28 @@ public class CalculateResult extends AppCompatActivity {
                 //intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
                 intent.putExtra(Intent.EXTRA_TEXT, contentMessage());
                 startActivity(Intent.createChooser(intent, ""));
+                break;
+
+            case R.id.action_del:
+                AlertDialog.Builder al = new AlertDialog.Builder(CalculateResult.this);
+                al.setMessage("Are you sure you want to delete this committee?");
+                al.setCancelable(true);
+                al.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mydb.dropTab();
+                        Intent in = new Intent(getApplicationContext(), ResultFill.class);
+                        setResult(RESULT_OK, in);
+                        finish();
+                    }
+                });
+                al.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                al.show();
 
         }
         return super.onOptionsItemSelected(item);
@@ -250,5 +285,14 @@ public class CalculateResult extends AppCompatActivity {
         }
 
         return sortedMap;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 }
