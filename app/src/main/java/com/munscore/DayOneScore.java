@@ -76,22 +76,22 @@ public class DayOneScore extends AppCompatActivity {
                             Intent i = getIntent();
                             String type = i.getStringExtra("type");
                             if(type.equals("poo")){
-                                mydb.InsertTabScore(getApplicationContext(), name, POINT_OF_ORDER, 1, Integer.parseInt(c[0]));
+                                mydb.InsertTabScore(getApplicationContext(), name, POINT_OF_ORDER, 1, Float.parseFloat(c[0]));
                             }
                             if(type.equals("poi")){
-                                mydb.InsertTabScore(getApplicationContext(), name, POINT_OF_INFO, 1, Integer.parseInt(c[0]));
+                                mydb.InsertTabScore(getApplicationContext(), name, POINT_OF_INFO, 1, Float.parseFloat(c[0]));
                             }
                             if(type.equals("chit")){
-                                mydb.InsertTabScore(getApplicationContext(), name, CHIT, 1, Integer.parseInt(c[0]));
+                                mydb.InsertTabScore(getApplicationContext(), name, CHIT, 1, Float.parseFloat(c[0]));
                             }
                             if(type.equals("speech")){
                                 mydb.insertScore(getApplicationContext(), cr, c, 1, name);
                             }
                             if(type.equals("dr")){
-                                mydb.InsertTabScore(getApplicationContext(), name, DR, 1, Integer.parseInt(c[0]));
+                                mydb.InsertTabScore(getApplicationContext(), name, DR, 1, Float.parseFloat(c[0]));
                             }
                             if(type.equals("dir")){
-                                mydb.InsertTabScore(getApplicationContext(), name, DIRECTIVE, 1, Integer.parseInt(c[0]));
+                                mydb.InsertTabScore(getApplicationContext(), name, DIRECTIVE, 1, Float.parseFloat(c[0]));
                             }
                             Intent in = new Intent(getApplicationContext(), CountryDetails.class);
                             setResult(RESULT_OK, in);

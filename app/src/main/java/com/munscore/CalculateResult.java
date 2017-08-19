@@ -233,6 +233,11 @@ public class CalculateResult extends AppCompatActivity {
                     }
                 });
                 al.show();
+                break;
+
+            case R.id.details:
+                Intent in = new Intent(this, ViewDetails.class);
+                startActivity(in);
 
         }
         return super.onOptionsItemSelected(item);
@@ -287,12 +292,12 @@ public class CalculateResult extends AppCompatActivity {
         return sortedMap;
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
-    }
+    }*/
 }

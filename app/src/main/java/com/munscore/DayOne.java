@@ -154,13 +154,13 @@ public class DayOne extends Fragment {
             }
             catch (SQLException f){
                 f.printStackTrace();
-                getActivity().runOnUiThread(new Runnable() {
+                /*getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         //fab.setVisibility(View.VISIBLE);
                         name.setVisibility(View.GONE);
                     }
-                });
+                });*/
             }
             return null;
         }

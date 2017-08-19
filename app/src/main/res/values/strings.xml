@@ -30,4 +30,5 @@
     <string name="special_mention">Special mention</string>
     <string name="committee_name">Committee</string>
     <string name="calculate_result">Calculate Result</string>
+    <string name="title_activity_country_result_details">CountryResultDetails</string>
 </resources>

@@ -30,19 +30,6 @@ public class ResultFill extends AppCompatActivity implements View.OnClickListene
         cal_res.setOnClickListener(this);
     }
 
-    /*void StartCalRes(){
-        String best = best_del.getText().toString();
-        String high = high_comm.getText().toString();
-        String spec = spec_men.getText().toString();
-        Intent in = new Intent(ResultFill.this, CalculateResult.class);
-        in.putExtra("best_del", best);
-        in.putExtra("high", high);
-        in.putExtra("spec", spec);
-        //finish();
-        //in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivityForResult(in, 6);
-    }*/
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -86,12 +73,12 @@ public class ResultFill extends AppCompatActivity implements View.OnClickListene
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
-    }
+    }*/
 }

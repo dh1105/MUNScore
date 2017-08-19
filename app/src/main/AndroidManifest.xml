@@ -81,13 +81,34 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.munscore.MainActivity" />
         </activity>
-        <activity android:name=".CalculateResult" />
+        <activity
+            android:name=".CalculateResult"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".WriteDetermine"
             android:launchMode="singleTop"
             android:parentActivityName=".CommitteeActivity"
+            android:screenOrientation="portrait"
             tools:targetApi="jelly_bean" />
-        <activity android:name=".ResultFill"></activity>
+        <activity
+            android:name=".ResultFill"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ViewDetails"
+            android:launchMode="singleTop"
+            android:parentActivityName=".CalculateResult"
+            android:screenOrientation="portrait"
+            tools:targetApi="jelly_bean" />
+        <activity
+            android:name=".CountryResultDetails"
+            android:label="@string/title_activity_country_result_details"
+            android:parentActivityName=".ViewDetails"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.munscore.ViewDetails" />
+        </activity>
     </application>
 
 </manifest>

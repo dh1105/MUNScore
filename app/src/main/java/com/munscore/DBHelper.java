@@ -114,7 +114,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    void InsertTabScore(Context context, String country, String name, int day, int score){
+    void InsertTabScore(Context context, String country, String name, int day, float score){
         try{
             SQLiteDatabase dbname = context.openOrCreateDatabase(DATABASE_NAME, Context.MODE_WORLD_WRITEABLE, null);
             /*String INSERT="insert into "+ JUDGE_TABLE_NAME + "(country_name,"+titleString+"day)"+ " values" +"('" + name + "'," + markString + String.valueOf(day) + ")";
@@ -346,6 +346,20 @@ public class DBHelper extends SQLiteOpenHelper {
             Log.d("Column: ", anA);
         }
         return dbCursor.getColumnNames();
+    }
+
+    float getScore(String table_name, String name, int day){
+        float score = 0.0f;
+        try{
+            SQLiteDatabase db = getReadableDatabase();
+            Cursor c = db.rawQuery("select sum(score) from " + table_name + " where country_name='" + name + "' and day=" + String.valueOf(day), null);
+            c.moveToFirst();
+            score = c.getFloat(0);
+        }
+        catch (SQLiteException e){
+            e.printStackTrace();
+        }
+        return score;
     }
 
     boolean getResultQuery(){
@@ -636,6 +650,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS chit");
             db.execSQL("DROP TABLE IF EXISTS directive");
             db.execSQL("DROP TABLE IF EXISTS result");
+            db.close();
             return true;
         }
         catch (SQLException e){
@@ -662,4 +677,19 @@ public class DBHelper extends SQLiteOpenHelper {
         return dbCursor.getColumnNames();
     }
 
+    public float getSpeechScore(String name, ArrayList<String> j, int i) {
+        float score = 0.0f;
+        try{
+            SQLiteDatabase db = getReadableDatabase();
+            for(int k=0; k<j.size(); k++){
+                Cursor c = db.rawQuery("select sum(" + j.get(k) + ") from " + JUDGE_TABLE_NAME + " where country_name='" + name + "'", null);
+                c.moveToFirst();
+                score = score + c.getFloat(0);
+            }
+        }
+        catch (SQLiteException e){
+            e.printStackTrace();
+        }
+        return score;
+    }
 }

@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         if(mydb.isTableExist(RESULT)){
+            ResultCheck();
+            Log.d("Exists: ", "Result");
             Intent in = new Intent(MainActivity.this, ResultFill.class);
             //finish();
             //in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -96,6 +98,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
+        if(mydb.isTableExist(RESULT)){
+            ResultCheck();
+        }
         super.onResume();
     }
 
@@ -266,13 +271,15 @@ public class MainActivity extends AppCompatActivity
                     al.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Menu menuNav = navigationView.getMenu();
+                            /*Menu menuNav = navigationView.getMenu();
                             MenuItem nav_item2 = menuNav.findItem(R.id.day_one);
                             nav_item2.setEnabled(false);
                             MenuItem nav_item3 = menuNav.findItem(R.id.day_two);
                             nav_item3.setEnabled(false);
                             MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
-                            nav_item4.setEnabled(false);
+                            nav_item4.setEnabled(false);*/
+                            navigationView.setCheckedItem(R.id.home);
+                            ResultCheck();
                             Intent in = new Intent(MainActivity.this, ResultFill.class);
                             //finish();
                             //in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -290,6 +297,14 @@ public class MainActivity extends AppCompatActivity
                     });
                     al.setCancelable(false);
                     al.show();
+                }
+                else{
+                    navigationView.setCheckedItem(R.id.home);
+                    ResultCheck();
+                    Intent in = new Intent(MainActivity.this, ResultFill.class);
+                    //finish();
+                    //in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivityForResult(in, 6);
                 }
                 break;
 
@@ -328,8 +343,9 @@ public class MainActivity extends AppCompatActivity
         }
         if(requestCode == 6){
             if(resultCode == RESULT_OK){
-                Log.d("Deleted", "Comm");
+                Log.d("Deleted main", "Comm");
                 Log.d("Starting", "Main");
+                navigationView.setCheckedItem(R.id.home);
                 recreate();
                 /*hideFrag();
                 //this.invalidateOptionsMenu();
