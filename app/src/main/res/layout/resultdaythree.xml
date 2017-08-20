@@ -48,7 +48,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_speech"
+                        android:id="@+id/total_speech_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
@@ -75,7 +75,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_speech_score"
+                        android:id="@+id/total_speech_score_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
@@ -122,7 +122,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_poo"
+                        android:id="@+id/total_poo_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
@@ -149,7 +149,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_poo_score"
+                        android:id="@+id/total_poo_score_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
@@ -196,7 +196,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_poi"
+                        android:id="@+id/total_poi_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
@@ -223,7 +223,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_poi_score"
+                        android:id="@+id/total_poi_score_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
@@ -270,7 +270,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_dir"
+                        android:id="@+id/total_dir_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
@@ -297,7 +297,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_dir_score"
+                        android:id="@+id/total_dir_score_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
@@ -344,7 +344,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_chits"
+                        android:id="@+id/total_chits_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
@@ -371,7 +371,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_chit_score"
+                        android:id="@+id/total_chit_score_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
@@ -419,7 +419,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_dr"
+                        android:id="@+id/total_dr_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"
@@ -446,7 +446,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/total_dr_score"
+                        android:id="@+id/total_dr_score_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="30dp"

@@ -626,15 +626,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
     Cursor getComName(){
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery( "select committee_name from committee where id = 1", null );
+        Cursor c = db.rawQuery( "select committee_name from committee where id = 1", null );
+        return c;
     }
 
     int getDays(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor rs = db.rawQuery("select days from committee where id = 1",null);
-        rs.moveToFirst();
-        int temp = rs.getInt(0);
-        Log.d("Temp db: ", Integer.toString(temp));
+        int temp=0;
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor rs = db.rawQuery("select days from committee where id = 1",null);
+            rs.moveToFirst();
+            temp = rs.getInt(0);
+            //db.close();
+            Log.d("Temp db: ", Integer.toString(temp));
+        }
+        catch (SQLiteException e){
+            e.printStackTrace();
+        }
         return temp;
     }
 
@@ -682,7 +690,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
             SQLiteDatabase db = getReadableDatabase();
             for(int k=0; k<j.size(); k++){
-                Cursor c = db.rawQuery("select sum(" + j.get(k) + ") from " + JUDGE_TABLE_NAME + " where country_name='" + name + "'", null);
+                Cursor c = db.rawQuery("select sum(" + j.get(k) + ") from " + JUDGE_TABLE_NAME + " where country_name='" + name + "' and day = " + String.valueOf(i), null);
                 c.moveToFirst();
                 score = score + c.getFloat(0);
             }

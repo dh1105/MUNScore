@@ -279,11 +279,15 @@ public class MainActivity extends AppCompatActivity
                             MenuItem nav_item4 = menuNav.findItem(R.id.day_three);
                             nav_item4.setEnabled(false);*/
                             navigationView.setCheckedItem(R.id.home);
+                            /*FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.content_frame, new Home()).commit();*/
                             ResultCheck();
                             Intent in = new Intent(MainActivity.this, ResultFill.class);
                             //finish();
                             //in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivityForResult(in, 6);
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.content_frame, new Home()).commit();
                         }
                     });
                     al.setNegativeButton("No", new DialogInterface.OnClickListener() {
